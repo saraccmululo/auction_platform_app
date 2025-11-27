@@ -1,0 +1,59 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create New Listing</h2>
+    <form action="{% url 'create' %}" method="POST">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" name="title" class="form-control" id="title" placeholder="Add a title" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="description" class="form-control" id="description" placeholder="Add a description" rows="3" required>
+        </textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="image_url" class="form-label">Image URL</label>
+        <input type="text" name="image_url" class="form-control" id="image_url" placeholder="Add a image URL">
+      </div>
+
+      <div class="mb-3">
+        <label for="start_bid" class="form-label">Starting bid</label>
+        <input type="number" name="start_bid" class="form-control" id="start_bid" placeholder="Enter initial price" step="0.10">
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select class="form-select" id="category" name="category" aria-label="category names">
+          <option value="" selected disabled>Select a category</option>
+        {% for category in categories %}
+          <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3 form-check">
+        <button type="submit" class="btn btn-primary">Create Listing</button>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert 
+        {% if message.tags == 'error' %}
+          alert-danger
+        {% elif message.tags %}
+          alert-{{ message.tags }}
+        {% else %}
+          alert-info
+        {% endif %}">
+      {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+    </form>
+
+    
+{% endblock %}

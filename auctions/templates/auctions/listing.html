@@ -1,0 +1,144 @@
+{% extends "auctions/layout.html" %} 
+
+{% block body %}
+<div class="container mt-4">
+
+<h2 class="mb-3">{{ listing.title }}</h2>
+
+{% if listing.image_url %}
+  <img
+  src="{{ listing.image_url}}"
+  alt="{{listing.title}}"
+  class="img-fluid rounded mb-4"
+  style="max-width: 250px; height: auto"
+  />
+{% endif %}
+
+<div class="row">
+  {% if user.is_authenticated %}
+   <div class="d-flex align-items-center gap-3 mb-4">
+
+    <form action="{% url 'watchlist_toggle' listing.id %}" method="POST" class="m-3">
+       {% csrf_token %}
+      <button type="submit" class="btn btn-warning btn-sm" data-bs-toggle="button">
+        {{ message }}
+      </button>
+    </form>
+
+    {% if user == listing.owner and listing.is_active %}
+    <form action="{% url 'close_listing' listing.id %}" method="POST" class="d-inline align-middle">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-link btn-sm text-danger align-middle p-0">Close this auction</button>
+    </form>
+    {% endif %}
+
+    {% if not listing.is_active %}
+      <span class="text-danger fw-bold">This auction has ended</span>
+    {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if 'close_listing' in message.tags %}
+      {% if 'success' in message.tags %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% elif 'error' in message.tags %}
+        <div class="alert alert-danger">{{ message }}</div>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+
+<p><strong>Description:</strong></p>
+<p>{{ listing.description }}</p>
+<p><strong>Seller: </strong><span>{{ listing.owner.username|title }}</span></p>
+<p><strong>Starting bid: </strong><span>${{ listing.start_bid }}</span></p>
+
+{% if listing.is_active %}
+  <p><strong>Current price: </strong><span>${{ highest_bid }}</span></p>
+{% else %}
+<p class="text-danger"><strong>Final price: </strong><span>${{ highest_bid }}</span></p>
+{% endif %}
+
+{% if user.is_authenticated and not listing.is_active %} 
+{% if user == listing.owner %}
+  <p class="text-success">
+    <strong>Winner: </strong>
+    <span>{{ listing.winner.username|title }}</span>
+  </p>
+{% endif %}
+
+{% if user == listing.winner %}
+  <p class="text-success">
+    <strong>Winner: </strong>
+    <span> Congratulations, {{ listing.winner.username|title }}! You have won this auction!</span>
+  </p>
+{% endif %}
+{% endif %}
+
+{% if user.is_authenticated and listing.is_active %}
+  <p><strong>Enter a bid:</strong></p>
+  <div>
+    <form action="{% url 'place_bid' listing.id %}" method="POST" class="d-flex gap-2 mb-3">
+      {% csrf_token %}
+      <div>
+        <input type="number" name="bid_amount" id="bid_amount" placeholder="$" step="0.10">
+        <button type="submit" class="btn btn-warning btn-sm">Place bid</button>
+      </div>
+  </form>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'bid' in message.tags %}
+        {% if 'success' in message.tags %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% else %}
+          <div class="alert alert-danger">{{ message }}</div>
+        {% endif %}
+      {%endif%}
+    {% endfor %}
+  {% endif %}
+
+{% endif %}
+
+  <hr class="my-4 border-secondary" >
+
+  <p><strong>Comments</strong></p> 
+  {% if user.is_authenticated and listing.is_active %}
+  <div>
+    <form action="{% url 'add_comment' listing.id %}" method="POST">
+    {% csrf_token %}
+        <div class="d-flex gap-2 mt-2">
+          <input type="text" class="form-control" name="add_comment" id="add_comment" placeholder="Enter a comment">
+          <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        </div> 
+    </form>   
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'comment' in message.tags %}
+      <div class="alert alert-danger">{{ message }}</div>
+      {%endif%}
+      {% endfor %}
+    {% endif %}
+{% endif %}
+
+<hr class="mt-4 mb-3">
+  {% for comment in comments %}
+    <div class="comment-box p-2 mb-2 border rounded">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <strong class="m-0" style="font-size: 0.85rem;" >{{comment.user.username|title}}</strong>
+        <small class="text-muted">{{comment.timestamp}}</small>
+      </div>
+      <p class="mb-0 small">{{comment.text}}</p>
+    </div>
+  {% empty %}
+<p>No comments yet.</p>
+{% endfor %}
+</div>
+{% endblock %}
