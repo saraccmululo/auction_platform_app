@@ -205,7 +205,7 @@ def close_listing(request, listing_id):
     # Save the listing changes into db
     listing_obj.save()
     
-    messages.success(request, "You closed this auction successfully. This listing was deactivated.", extra_tags="close_listing")
+    messages.success(request, "You closed this auction successfully. This listing has been deactivated.", extra_tags="close_listing")
 
     return redirect('listing', listing_id=listing_id)
 
