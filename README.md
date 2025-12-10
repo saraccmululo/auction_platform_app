@@ -3,6 +3,10 @@
 Web app that allows users to create, browse, bid on, and comment on auction listings in an eBay-like interface.
 
 ---
+## Video Overview
+[Watch the project overview](https://youtu.be/LcI1S3pxI0U)
+
+---
 
 ## Features
 - Create auction listings with title, description, starting bid, optional image, and category.
