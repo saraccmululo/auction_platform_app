@@ -23,8 +23,8 @@ Python, Django, HTML, CSS, Bootstrap.
 
 ## Installation
 1. Clone the repository:
-   git clone https://github.com/saraccmululo/Auction_Platform_app.git
-   cd Auction_Platform
+   git clone https://github.com/saraccmululo/auction_platform_app.git
+   cd auction_platform_app
 2. Create a virtual environment:
     python3 -m venv env
     source env/bin/activate   # On Windows: env\Scripts\activate
